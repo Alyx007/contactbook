@@ -4,32 +4,49 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import './addContact.css';
 
 type ContactFormData = {
-  id: number;
+  // id: number; 
   nombre: string;
   apellido: string;
   telefono: string;
-  correo: string;
+  correo_electronico: string;
   calle: string;
   ciudad: string;
   estado: string;
   empresa: string;
   cargo: string;
   notas: string;
-  fechaCumpleanos: string;
+  fecha_de_cumpleanos: string;
 };
 
-// Initial ID counter
-let contactIdCounter = 0;
+// Initial ID counter - I don't need it since Python will generate it's own ids
+// let contactIdCounter = 0;
 
 const ContactForm: React.FC = () => {
   const { register, handleSubmit, reset } = useForm<ContactFormData>();
   const [contacts, setContacts] = useState<ContactFormData[]>([]);
 
-  const onSubmit: SubmitHandler<ContactFormData> = data => {
-    data.id = ++contactIdCounter; // Increment the counter and assign the new value as ID
-    setContacts([...contacts, data]);
-    console.log(data);
-    reset();
+  const onSubmit: SubmitHandler<ContactFormData> = async data => {
+    try {
+      const response = await fetch('http://localhost:5000/api/contacts', {
+        method: 'POST', // posting - "saving" and senfing the code to the backend
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify(data), 
+      });
+      if (response.ok) {
+        const newContact = await response.json();
+        setContacts([...contacts, newContact]);
+        reset();
+      } else {
+        const errorData = await response.json();
+        console.error('Error:', errorData);
+        alert(`Error: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while creating the contact.');
+    }
   };
 
   return (
@@ -48,7 +65,7 @@ const ContactForm: React.FC = () => {
       </div>
       <div>
         <label htmlFor="correo">Correo Electrónico:</label>
-        <input {...register('correo')} id="correo" type="email" required />
+        <input {...register('correo_electronico')} id="correo" type="email" required />
       </div>
       <div>
         <label htmlFor="calle">Calle:</label>
@@ -75,8 +92,8 @@ const ContactForm: React.FC = () => {
         <textarea {...register('notas')} id="notas" />
       </div>
       <div>
-        <label htmlFor="fechaCumpleanos">Fecha de Cumpleaños:</label>
-        <input {...register('fechaCumpleanos')} id="fechaCumpleanos" type="date" required />
+        <label htmlFor="fecha_de_cumpleanos">Fecha de Cumpleaños:</label>
+        <input {...register('fecha_de_cumpleanos')} id="fechaCumpleanos" type="date" required />
       </div>
       <button type="submit">Crear Contacto</button>
     </form>
