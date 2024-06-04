@@ -1,5 +1,6 @@
 // ./src/pages/Contacts.tsx
 import React, { useState } from 'react';
+import UpdateContact from '../components/UpdateContact';
 
 interface Contact {
   id: number;
@@ -77,7 +78,7 @@ const ContactosPage: React.FC = () => {
           <div className="modal-content">
             <span className="close" onClick={() => setShowEditModal(false)}>&times;</span>
             <h2>Edit Contact</h2>
-            {/* Form to edit contact details */}
+            <UpdateContact />
           </div>
         </div>
       )}

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ContactForm from '../components/AddContact';
-import Contact from './Contacts';
+// import Contact from './Contacts';
 
 const MainPage: React.FC = () => {
   return (
